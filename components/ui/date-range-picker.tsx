@@ -329,7 +329,6 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       openedRangeCompareRef.current = rangeCompare;
     }
   }, [isOpen]);
-
   return (
     <Popover
       modal={true}
