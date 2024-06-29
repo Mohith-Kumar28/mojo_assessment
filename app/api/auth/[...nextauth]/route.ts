@@ -14,8 +14,7 @@ export const authOptions: any = {
         params: {
           scope:
             "read_insights,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_engagement",
-          redirect_uri:
-            "https://3nmnjo2ttz.loclx.io/api/auth/callback/facebook",
+          redirect_uri: process.env.NEXTAUTH_URL,
         },
       },
     }),
