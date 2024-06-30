@@ -11,6 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { exportToExcel } from "@/utils/export-to-xcell";
 import { signIn, useSession } from "next-auth/react";
@@ -21,6 +30,7 @@ import { PiExportDuotone } from "react-icons/pi";
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState<PageData>();
 
+  const [period, setPeriod] = useState("day");
   const [loading, setLoading] = useState(true);
   const [metricsData, setMetricsData] = useState<ApiResponse>();
   const { data: session }: any = useSession();
@@ -28,7 +38,11 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://graph.facebook.com/v20.0/${selectedPage?.id}/insights?pretty=0&metric=page_follows,page_post_engagements,page_impressions,page_actions_post_reactions_total&period=day&access_token=${selectedPage?.access_token}`
+          `https://graph.facebook.com/v20.0/${
+            selectedPage?.id
+          }/insights?pretty=0&metric=page_follows,page_post_engagements,page_impressions,page_actions_post_reactions_total&period=day&access_token=${
+            selectedPage?.access_token
+          }&${period && "period=" + period}`
         );
 
         if (!response.ok) {
@@ -48,7 +62,7 @@ export default function Home() {
     if (selectedPage?.access_token) {
       fetchData();
     }
-  }, [selectedPage]);
+  }, [selectedPage, period]);
 
   // Calculate totals for each metric
   const metricsWithTotals = metricsData?.data.map((metric) => ({
@@ -163,10 +177,29 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="grid gap-4 lg:grid-cols-2 ">
         {session && (
-          <div className="grid gap-4   sm:grid-cols-5 sm:col-span-2">
+          <div className="grid gap-4   sm:grid-cols-7 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
             </Button>
+            <div className="sm:col-span-2">
+              <Select
+                value={period}
+                onValueChange={(value) => setPeriod(value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {/* <SelectLabel>Period</SelectLabel> */}
+                    <SelectItem value="day">Day</SelectItem>
+                    <SelectItem value="week">Week</SelectItem>
+                    <SelectItem value="days_28">28 Days</SelectItem>
+                    <SelectItem value="lifetime">Lifetime</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="sm:col-span-2">
               <DateRangePicker
                 onUpdate={(values) => console.log(values)}
