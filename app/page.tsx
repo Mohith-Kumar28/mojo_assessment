@@ -1,5 +1,6 @@
 "use client";
 import PagesList from "@/components/pages-list";
+import { PathFinderLoader } from "@/components/path-finder-loader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +12,9 @@ import {
 } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { exportToExcel } from "@/utils/export-to-xcell";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { FaFacebook } from "react-icons/fa";
 import { PiExportDuotone } from "react-icons/pi";
 
 export default function Home() {
@@ -159,66 +161,94 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="grid gap-4 lg:grid-cols-2 ">
-        <div className="grid gap-4   sm:grid-cols-5 sm:col-span-2">
-          <Button onClick={handleExportClick} className="sm:col-span-1">
-            <PiExportDuotone className="text-2xl" />
-          </Button>
-          <div className="sm:col-span-2">
-            <DateRangePicker
-              onUpdate={(values) => console.log(values)}
-              initialDateFrom="2023-01-01"
-              initialDateTo="2023-12-31"
-              align="start"
-              locale="en-GB"
-              showCompare={false}
-            />
+        {session && (
+          <div className="grid gap-4   sm:grid-cols-5 sm:col-span-2">
+            <Button onClick={handleExportClick} className="sm:col-span-1">
+              <PiExportDuotone className="text-2xl" />
+            </Button>
+            <div className="sm:col-span-2">
+              <DateRangePicker
+                onUpdate={(values) => console.log(values)}
+                initialDateFrom="2023-01-01"
+                initialDateTo="2023-12-31"
+                align="start"
+                locale="en-GB"
+                showCompare={false}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <PagesList
+                setSelectedPage={setSelectedPage}
+                selectedPage={selectedPage}
+              />
+            </div>
           </div>
-          <div className="sm:col-span-2">
-            <PagesList
-              setSelectedPage={setSelectedPage}
-              selectedPage={selectedPage}
-            />
-          </div>
-        </div>
+        )}
         <Card
-          className="sm:col-span-2 flex justify-between gap-4"
+          className="sm:col-span-2 flex flex-wrap justify-between md:gap-4"
           x-chunk="dashboard-05-chunk-0"
         >
           <CardHeader className="pb-3">
             <CardTitle>Hi {session?.user?.name}!</CardTitle>
 
             <CardDescription className="max-w-lg text-balance leading-relaxed">
-              Select a page to view metrics and insights. Use the date fileter
-              to get the filtered data
+              {!session
+                ? "Give account access by pressing the connect with facebook button, to view pages metrics"
+                : "Select a page to view metrics and insights. Use the date fileter to get the filtered data"}
             </CardDescription>
           </CardHeader>
-          <div className="p-6">
-            <Avatar className="size-20">
-              <AvatarImage src={session?.user?.image ?? ""} alt="user" />
-              <AvatarFallback>FB</AvatarFallback>
-            </Avatar>
+          <div className="p-6 flex flex-col  align-middle justify-center">
+            {!session ? (
+              <>
+                <Button
+                  onClick={() => {
+                    signIn("facebook");
+                  }}
+                  className="gap-3"
+                >
+                  <FaFacebook className="text-lg" />
+                  <span className="text-sm font-semibold leading-6">
+                    Login with Facebook
+                  </span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Avatar className="size-20">
+                  <AvatarImage src={session?.user?.image ?? ""} alt="user" />
+                  <AvatarFallback>FB</AvatarFallback>
+                </Avatar>
+              </>
+            )}
           </div>
         </Card>
+        {session ? (
+          metricsWithTotals?.map((metric) => {
+            const title = metricTitles[metric.name];
+            if (!title) return null; // Skip if no matching title found
 
-        {metricsWithTotals?.map((metric) => {
-          const title = metricTitles[metric.name];
-          if (!title) return null; // Skip if no matching title found
-
-          return (
-            <Card key={metric.id}>
-              <CardHeader className="pb-2">
-                <CardDescription>{title}</CardDescription>
-                <CardTitle className="text-4xl">{metric.totalValue}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xs text-muted-foreground">
-                  {/* Placeholder for percentage change, adjust as needed */}
-                  +25% from last week
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+            return (
+              <Card key={metric.id}>
+                <CardHeader className="pb-2">
+                  <CardDescription>{title}</CardDescription>
+                  <CardTitle className="text-4xl">
+                    {metric.totalValue}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-xs text-muted-foreground">
+                    {/* Placeholder for percentage change, adjust as needed */}
+                    +25% from last week
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        ) : (
+          <div className="flex justify-center w-full sm:col-span-2">
+            <PathFinderLoader />
+          </div>
+        )}
       </div>
     </main>
   );
