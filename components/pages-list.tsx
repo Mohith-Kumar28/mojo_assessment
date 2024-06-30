@@ -82,7 +82,7 @@ export default function PagesList() {
 
         const pagesData: PagesData = await response.json();
         const convertedData = convertPagesData(pagesData);
-        setData(convertedData);
+        // setData(convertedData);
         localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
         setLoading(false);
       } catch (error) {
