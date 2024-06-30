@@ -203,10 +203,16 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="grid gap-4 lg:grid-cols-2 ">
         {session && (
-          <div className="grid gap-4   sm:grid-cols-7 sm:col-span-2">
+          <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
             </Button>
+            <div className="sm:col-span-2">
+              <PagesList
+                setSelectedPage={setSelectedPage}
+                selectedPage={selectedPage}
+              />
+            </div>
             <div className="sm:col-span-2">
               <Select
                 value={period}
@@ -226,7 +232,7 @@ export default function Home() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <DateRangePicker
                 onUpdate={(values) => handleDateRangeUpdate(values.range)}
                 // onUpdate={(value) => console.log("a", value)}
@@ -235,12 +241,6 @@ export default function Home() {
                 align="start"
                 // locale="en-GB"
                 showCompare={false}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <PagesList
-                setSelectedPage={setSelectedPage}
-                selectedPage={selectedPage}
               />
             </div>
           </div>
@@ -254,8 +254,8 @@ export default function Home() {
 
             <CardDescription className="max-w-lg text-balance leading-relaxed">
               {!session
-                ? "Give account access by pressing the connect with facebook button, to view pages metrics"
-                : "Select a page to view metrics and insights. Use the date fileter to get the filtered data"}
+                ? "Please grant account access by clicking the 'Login with Facebook' button to view page metrics."
+                : "Choose a page to explore metrics and insights. Utilize the period and date filter to refine your data view."}
             </CardDescription>
           </CardHeader>
           <div className="p-6 flex flex-col  align-middle justify-center">
