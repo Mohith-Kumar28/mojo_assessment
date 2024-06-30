@@ -69,28 +69,30 @@ export default function PagesList() {
   const [pagesData, setPagesData] = useState<ConvertedPage[]>([]);
   const { data: session }: any = useSession();
   useEffect(() => {
+    const access_token = session?.accessToken;
     const fetchData = async () => {
-      if (session?.accessToken)
-        try {
-          const response = await fetch(
-            `https://graph.facebook.com/v20.0/me/accounts?access_token=${session?.accessToken}`
-          );
+      try {
+        const response = await fetch(
+          `https://graph.facebook.com/v20.0/me/accounts?access_token=${access_token}`
+        );
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          // console.log("pagesData", response?.data);
-          const pagesDataRes: PagesData = await response.json();
-          const convertedData = convertPagesData(pagesDataRes);
-          setPagesData(convertedData);
-          // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
-          setLoading(false);
-        } catch (error) {
-          setLoading(false);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
+        const pagesDataRes: PagesData = await response.json();
+        console.log("pagesData", pagesDataRes);
+        const convertedData = convertPagesData(pagesDataRes);
+        setPagesData(convertedData);
+        // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
     };
 
-    fetchData();
+    if (access_token) {
+      fetchData();
+    }
   }, [session]);
   return (
     <Popover open={open} onOpenChange={setOpen}>
