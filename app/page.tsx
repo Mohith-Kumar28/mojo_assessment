@@ -202,7 +202,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex  flex-col items-center justify-between px-14">
+    <main className="flex  flex-col items-center justify-between p-14">
       <div className="grid gap-4 lg:grid-cols-2 ">
         {session && (
           <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
@@ -299,9 +299,9 @@ export default function Home() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground">
                     {metric.description}
-                  </div> */}
+                  </div>
                 </CardContent>
               </Card>
             );
