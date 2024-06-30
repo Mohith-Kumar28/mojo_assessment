@@ -19,39 +19,39 @@ import {
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-const pagesData: PagesData = {
-  data: [
-    {
-      access_token:
-        "EABuacXANtYUBO0b9pXKikMkTwV1F9kmTJPRGN75nMC4scEwLbAYM1TumXfTbeQVcrk2qMIGJWoS4VFl36UNDmOJ7MyajBLraUCIpBpfZC2j2du28ry877yHtTt5g336oHXCDZAgfBUSwmKPg3NQfhzG4LIAtpuOTZCFgkj8L8NGKRUuvJf5SkZCWZAKhQr4UlNpqeeYejApTa6o6UCSZCZBoxa9OTnp0y3vyQZDZD",
-      category: "Teens & Kids Website",
-      category_list: [
-        {
-          id: "2716",
-          name: "Teens & Kids Website",
-        },
-      ],
-      name: "Test1",
-      id: "298712583335639",
-      tasks: [
-        "ADVERTISE",
-        "ANALYZE",
-        "CREATE_CONTENT",
-        "MESSAGING",
-        "MODERATE",
-        "MANAGE",
-      ],
-    },
-  ],
-  paging: {
-    cursors: {
-      before:
-        "QVFIUm52aTcycEtPTGpoU0VtNWpWWm5SR1FzZAFE0TnlPaTFaTVhFWXZApUUg5cE1SM0t4Si01ZAnV0NmtNSFQ5RFdkZAG0zNXJBM0tnQUw1eHk5WUpGbVN0a2NR",
-      after:
-        "QVFIUm52aTcycEtPTGpoU0VtNWpWWm5SR1FzZAFE0TnlPaTFaTVhFWXZApUUg5cE1SM0t4Si01ZAnV0NmtNSFQ5RFdkZAG0zNXJBM0tnQUw1eHk5WUpGbVN0a2NR",
-    },
-  },
-};
+// const pagesData: PagesData = {
+//   data: [
+//     {
+//       access_token:
+//         "EABuacXANtYUBO0b9pXKikMkTwV1F9kmTJPRGN75nMC4scEwLbAYM1TumXfTbeQVcrk2qMIGJWoS4VFl36UNDmOJ7MyajBLraUCIpBpfZC2j2du28ry877yHtTt5g336oHXCDZAgfBUSwmKPg3NQfhzG4LIAtpuOTZCFgkj8L8NGKRUuvJf5SkZCWZAKhQr4UlNpqeeYejApTa6o6UCSZCZBoxa9OTnp0y3vyQZDZD",
+//       category: "Teens & Kids Website",
+//       category_list: [
+//         {
+//           id: "2716",
+//           name: "Teens & Kids Website",
+//         },
+//       ],
+//       name: "Test1",
+//       id: "298712583335639",
+//       tasks: [
+//         "ADVERTISE",
+//         "ANALYZE",
+//         "CREATE_CONTENT",
+//         "MESSAGING",
+//         "MODERATE",
+//         "MANAGE",
+//       ],
+//     },
+//   ],
+//   paging: {
+//     cursors: {
+//       before:
+//         "QVFIUm52aTcycEtPTGpoU0VtNWpWWm5SR1FzZAFE0TnlPaTFaTVhFWXZApUUg5cE1SM0t4Si01ZAnV0NmtNSFQ5RFdkZAG0zNXJBM0tnQUw1eHk5WUpGbVN0a2NR",
+//       after:
+//         "QVFIUm52aTcycEtPTGpoU0VtNWpWWm5SR1FzZAFE0TnlPaTFaTVhFWXZApUUg5cE1SM0t4Si01ZAnV0NmtNSFQ5RFdkZAG0zNXJBM0tnQUw1eHk5WUpGbVN0a2NR",
+//     },
+//   },
+// };
 
 const convertPagesData = (pagesData: PagesData): ConvertedPage[] => {
   return pagesData.data.map((page) => ({
@@ -60,38 +60,38 @@ const convertPagesData = (pagesData: PagesData): ConvertedPage[] => {
   }));
 };
 
-const formattedPages = convertPagesData(pagesData);
+// const formattedPages = convertPagesData(pagesData);
 
 export default function PagesList() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [pagesData, setPagesData] = useState<ConvertedPage[]>([]);
   const { data: session }: any = useSession();
-  console.log("session", session, session?.accessToken);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://graph.facebook.com/v20.0/me/accounts?access_token=EABuacXANtYUBO4ZA48fonqfTBD8ZBLklNxF2fApbJYZBBeMVviGYhnocTLm38tJHFGUNHVkBWMyiNCw4IJWjqzom6BaL8p76sveTI2FW3NgLm0aQ62Ohp3zLmr9EPRTnAUJHICH1E7TcNX8q0GZCdaaRnTtHnHmYuWLM1A5SZBHr8wzz9IrdsL8a4IomvPcTcPhBRZAkAR4sTs81QwZCO7uxaDTClYBqQoN6oht30K2ceLvodNiEf5DZAuNZBgqfZB`
-        );
+      if (session?.accessToken)
+        try {
+          const response = await fetch(
+            `https://graph.facebook.com/v20.0/me/accounts?access_token=${session?.accessToken}`
+          );
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          // console.log("pagesData", response?.data);
+          const pagesDataRes: PagesData = await response.json();
+          const convertedData = convertPagesData(pagesDataRes);
+          setPagesData(convertedData);
+          // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
         }
-        console.log("pagesData", response);
-        const pagesData: PagesData = await response.json();
-        const convertedData = convertPagesData(pagesData);
-        // setData(convertedData);
-        // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
     };
 
     fetchData();
-  }, []);
+  }, [session]);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -102,7 +102,7 @@ export default function PagesList() {
           className="w-full justify-between"
         >
           {value
-            ? formattedPages.find((page) => page.value === value)?.label
+            ? pagesData.find((page) => page.value === value)?.label
             : "Select page..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -113,7 +113,7 @@ export default function PagesList() {
           <CommandList>
             <CommandEmpty>No page found.</CommandEmpty>
             <CommandGroup>
-              {formattedPages.map((page) => (
+              {pagesData.map((page) => (
                 <CommandItem
                   key={page.value}
                   value={page.value}
