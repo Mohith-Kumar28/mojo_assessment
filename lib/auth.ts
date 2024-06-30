@@ -1,7 +1,5 @@
 import { Account, User as AuthUser, Session, TokenSet } from "next-auth";
 import FacebookProvider from "next-auth/providers/facebook";
-import User from "@/models/User";
-import connect from "@/utils/db";
 
 export const authOptions: any = {
   // Configure one or more authentication providers
