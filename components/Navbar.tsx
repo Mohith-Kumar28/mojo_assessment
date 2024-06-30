@@ -73,7 +73,7 @@ const Navbar = () => {
           aria-label="Global"
         >
           <div className="flex flex-1 items-center justify-end gap-x-6">
-            {!session && (
+            {session && (
               <Button
                 variant="ghost"
                 onClick={() => {
