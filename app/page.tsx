@@ -28,12 +28,32 @@ import { FaFacebook } from "react-icons/fa";
 import { PiExportDuotone } from "react-icons/pi";
 
 export default function Home() {
+  const { data: session }: any = useSession();
   const [selectedPage, setSelectedPage] = useState<PageData>();
 
   const [period, setPeriod] = useState("day");
+
   const [loading, setLoading] = useState(true);
   const [metricsData, setMetricsData] = useState<ApiResponse>();
-  const { data: session }: any = useSession();
+
+  // State variable for the selected date range
+
+  const [selectedRange, setSelectedRange] =
+    useState<DateRangePickerValue | null>({
+      from: new Date(new Date().setDate(new Date().getDate() - 7)),
+      to: new Date(),
+    });
+
+  // Function  to convert date to Unix timestamp
+  const dateToUnixTimestamp = (date: Date): number => {
+    return Math.floor(date.getTime() / 1000); // Convert milliseconds to seconds
+  };
+
+  // Handler for date range picker update
+  // Adjust the type of the parameter to match what the DateRangePicker expects
+  const handleDateRangeUpdate: DateRangePickerOnChangeHandler = (dateRange) => {
+    setSelectedRange(dateRange);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,14 +62,20 @@ export default function Home() {
             selectedPage?.id
           }/insights?pretty=0&metric=page_follows,page_post_engagements,page_impressions,page_actions_post_reactions_total&period=day&access_token=${
             selectedPage?.access_token
-          }&${period && "period=" + period}`
+          }&${period && "period=" + period}&${
+            selectedRange?.from &&
+            "since=" + dateToUnixTimestamp(selectedRange.from)
+          }&${
+            selectedRange?.to &&
+            "until=" + dateToUnixTimestamp(selectedRange.to)
+          }`
         );
 
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const metricsDataRes: ApiResponse = await response.json();
-        console.log("pagesData", metricsDataRes);
+        // console.log("pagesData", metricsDataRes);
         // const convertedData = convertPagesData(pagesDataRes);
         setMetricsData(metricsDataRes);
         // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
@@ -62,7 +88,7 @@ export default function Home() {
     if (selectedPage?.access_token) {
       fetchData();
     }
-  }, [selectedPage, period]);
+  }, [selectedPage, period, selectedRange]);
 
   // Calculate totals for each metric
   const metricsWithTotals = metricsData?.data.map((metric) => ({
@@ -176,7 +202,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="grid gap-4 lg:grid-cols-2 ">
-        {session && (
+        {!session && (
           <div className="grid gap-4   sm:grid-cols-7 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
@@ -202,11 +228,12 @@ export default function Home() {
             </div>
             <div className="sm:col-span-2">
               <DateRangePicker
-                onUpdate={(values) => console.log(values)}
-                initialDateFrom="2023-01-01"
-                initialDateTo="2023-12-31"
+                onUpdate={(values) => handleDateRangeUpdate(values.range)}
+                // onUpdate={(value) => console.log("a", value)}
+                initialDateFrom={selectedRange?.from}
+                initialDateTo={selectedRange?.to}
                 align="start"
-                locale="en-GB"
+                // locale="en-GB"
                 showCompare={false}
               />
             </div>

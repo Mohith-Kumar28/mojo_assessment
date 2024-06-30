@@ -85,7 +85,7 @@ const PagesList: React.FC<{
           throw new Error("Network response was not ok");
         }
         const pagesDataRes: PagesData = await response.json();
-        console.log("pagesData", pagesDataRes);
+        // console.log("pagesData", pagesDataRes);
         // const convertedData = convertPagesData(pagesDataRes);
         setPagesData(pagesDataRes);
         setValue(pagesDataRes.data[0].name);
@@ -102,9 +102,9 @@ const PagesList: React.FC<{
     }
   }, [session]);
 
-  {
-    console.log(selectedPage);
-  }
+  // {
+  //   console.log(selectedPage);
+  // }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

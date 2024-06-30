@@ -65,3 +65,10 @@ interface ExportOptions {
   detailedData: WorksheetDataType[];
   fileName: string;
 }
+
+interface DateRangePickerValue {
+  from?: Date;
+  to?: Date;
+}
+
+type DateRangePickerOnChangeHandler = (values: DateRangePickerValue) => void;
