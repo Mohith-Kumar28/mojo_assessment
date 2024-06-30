@@ -311,34 +311,35 @@ export default function Home() {
             <ShuffleLoader />
           </div>
         )}
-
-        <Tabs
-          defaultValue="page_daily_follows_unique"
-          className="sm:col-span-2"
-        >
-          <TabsList className="grid w-full grid-cols-4">
+        {session && (
+          <Tabs
+            defaultValue="page_daily_follows_unique"
+            className="sm:col-span-2"
+          >
+            <TabsList className="grid w-full grid-cols-4">
+              {Object.keys(metricTitles).map((key) => (
+                <TabsTrigger key={key} value={key}>
+                  {metricTitles[key]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
             {Object.keys(metricTitles).map((key) => (
-              <TabsTrigger key={key} value={key}>
-                {metricTitles[key]}
-              </TabsTrigger>
+              <TabsContent key={key} value={key}>
+                <Card>
+                  <CardHeader>
+                    {/* <CardDescription>{metricTitles[key]}</CardDescription> */}
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <MetricGraph
+                      // title={metricTitles[key]}
+                      chartData={prepareChartData(key, metricsData?.data)}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
             ))}
-          </TabsList>
-          {Object.keys(metricTitles).map((key) => (
-            <TabsContent key={key} value={key}>
-              <Card>
-                <CardHeader>
-                  {/* <CardDescription>{metricTitles[key]}</CardDescription> */}
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <MetricGraph
-                    // title={metricTitles[key]}
-                    chartData={prepareChartData(key, metricsData?.data)}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
+          </Tabs>
+        )}
       </div>
     </main>
   );
