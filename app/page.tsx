@@ -200,7 +200,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex  flex-col items-center justify-between p-14">
       <div className="grid gap-4 lg:grid-cols-2 ">
         {session && (
           <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
