@@ -79,11 +79,11 @@ export default function PagesList() {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
+        console.log("pagesData", response);
         const pagesData: PagesData = await response.json();
         const convertedData = convertPagesData(pagesData);
         // setData(convertedData);
-        localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
+        // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
         setLoading(false);
       } catch (error) {
         setLoading(false);
