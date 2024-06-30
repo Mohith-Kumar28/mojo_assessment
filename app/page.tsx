@@ -60,7 +60,7 @@ export default function Home() {
         const response = await fetch(
           `https://graph.facebook.com/v20.0/${
             selectedPage?.id
-          }/insights?pretty=0&metric=page_follows,page_post_engagements,page_impressions,page_actions_post_reactions_total&period=day&access_token=${
+          }/insights?pretty=0&metric=page_daily_follows_unique,page_impressions,page_post_engagements,page_actions_post_reactions_total&period=day&access_token=${
             selectedPage?.access_token
           }&${period && "period=" + period}&${
             selectedRange?.from &&
@@ -193,7 +193,7 @@ export default function Home() {
 
   // Map of metric names to card titles
   const metricTitles: { [key: string]: string } = {
-    page_follows: "Total Followers / Fans",
+    page_daily_follows_unique: "Total Followers / Fans",
     page_post_engagements: "Total Engagement",
     page_impressions: "Total Impressions",
     page_actions_post_reactions_total: "Total Reactions",
@@ -298,8 +298,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    {/* Placeholder for percentage change, adjust as needed */}
-                    +25% from last week
+                    {metric.description}
                   </div>
                 </CardContent>
               </Card>
