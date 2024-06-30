@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { exportToExcel } from "@/utils/export-to-xcell";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { PiExportDuotone } from "react-icons/pi";
 
@@ -19,7 +20,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [metricsData, setMetricsData] = useState<ApiResponse>();
-  // const { data: session }: any = useSession();
+  const { data: session }: any = useSession();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -184,7 +185,7 @@ export default function Home() {
           x-chunk="dashboard-05-chunk-0"
         >
           <CardHeader className="pb-3">
-            <CardTitle>Hi Mohith!</CardTitle>
+            <CardTitle>Hi {session?.user?.name}!</CardTitle>
 
             <CardDescription className="max-w-lg text-balance leading-relaxed">
               Select a page to view metrics and insights. Use the date fileter
@@ -193,7 +194,7 @@ export default function Home() {
           </CardHeader>
           <div className="p-6">
             <Avatar className="size-20">
-              <AvatarImage src="https://github.com/shadcn.png" alt="userName" />
+              <AvatarImage src={session?.user?.image ?? ""} alt="user" />
               <AvatarFallback>FB</AvatarFallback>
             </Avatar>
           </div>
