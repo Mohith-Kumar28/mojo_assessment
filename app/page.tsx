@@ -1,6 +1,7 @@
 "use client";
 import PagesList from "@/components/pages-list";
-import { PathFinderLoader } from "@/components/path-finder-loader";
+
+import { ShuffleLoader } from "@/components/shuffle-loader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -222,7 +223,7 @@ export default function Home() {
             )}
           </div>
         </Card>
-        {session ? (
+        {metricsWithTotals && metricsWithTotals.length > 0 ? (
           metricsWithTotals?.map((metric) => {
             const title = metricTitles[metric.name];
             if (!title) return null; // Skip if no matching title found
@@ -246,7 +247,7 @@ export default function Home() {
           })
         ) : (
           <div className="flex justify-center w-full sm:col-span-2">
-            <PathFinderLoader />
+            <ShuffleLoader />
           </div>
         )}
       </div>

@@ -73,7 +73,7 @@ const PagesList: React.FC<{
   const { data: session }: any = useSession();
   useEffect(() => {
     const access_token =
-      session?.accessToken || process.env.DEV_TEST_ACCESS_TOKEN;
+      session?.accessToken || process.env.NEXT_PUBLIC_DEV_TEST_ACCESS_TOKEN;
 
     const fetchData = async () => {
       try {
