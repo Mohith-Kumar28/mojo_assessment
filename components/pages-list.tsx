@@ -55,21 +55,27 @@ import { useSession } from "next-auth/react";
 
 const convertPagesData = (pagesData: PagesData): ConvertedPage[] => {
   return pagesData.data.map((page) => ({
-    value: page.name, // Assuming you want to use the category as both value and label
+    value: page.name,
     label: page.name,
   }));
 };
 
 // const formattedPages = convertPagesData(pagesData);
 
-export default function PagesList() {
+const PagesList: React.FC<{
+  selectedPage?: PageData; // Optional because it can be undefined initially
+  setSelectedPage: React.Dispatch<React.SetStateAction<PageData | undefined>>;
+}> = ({ selectedPage, setSelectedPage }) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(true);
-  const [pagesData, setPagesData] = useState<ConvertedPage[]>([]);
+  const [pagesData, setPagesData] = useState<PagesData>();
   const { data: session }: any = useSession();
   useEffect(() => {
-    const access_token = session?.accessToken;
+    const access_token =
+      session?.accessToken ||
+      "EABuacXANtYUBO4ZA48fonqfTBD8ZBLklNxF2fApbJYZBBeMVviGYhnocTLm38tJHFGUNHVkBWMyiNCw4IJWjqzom6BaL8p76sveTI2FW3NgLm0aQ62Ohp3zLmr9EPRTnAUJHICH1E7TcNX8q0GZCdaaRnTtHnHmYuWLM1A5SZBHr8wzz9IrdsL8a4IomvPcTcPhBRZAkAR4sTs81QwZCO7uxaDTClYBqQoN6oht30K2ceLvodNiEf5DZAuNZBgqfZB";
+
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -81,8 +87,8 @@ export default function PagesList() {
         }
         const pagesDataRes: PagesData = await response.json();
         console.log("pagesData", pagesDataRes);
-        const convertedData = convertPagesData(pagesDataRes);
-        setPagesData(convertedData);
+        // const convertedData = convertPagesData(pagesDataRes);
+        setPagesData(pagesDataRes);
         // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
         setLoading(false);
       } catch (error) {
@@ -94,6 +100,11 @@ export default function PagesList() {
       fetchData();
     }
   }, [session]);
+
+  {
+    console.log(selectedPage);
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -104,7 +115,7 @@ export default function PagesList() {
           className="w-full justify-between"
         >
           {value
-            ? pagesData.find((page) => page.value === value)?.label
+            ? pagesData?.data?.find((page) => page.name === value)?.name
             : "Select page..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -115,22 +126,23 @@ export default function PagesList() {
           <CommandList>
             <CommandEmpty>No page found.</CommandEmpty>
             <CommandGroup>
-              {pagesData.map((page) => (
+              {pagesData?.data?.map((page) => (
                 <CommandItem
-                  key={page.value}
-                  value={page.value}
+                  key={page.id}
+                  value={page.name}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(page.name);
+                    setSelectedPage(page);
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === page.value ? "opacity-100" : "opacity-0"
+                      value === page.name ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {page.label}
+                  {page.name}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -139,4 +151,6 @@ export default function PagesList() {
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default PagesList;

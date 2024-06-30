@@ -1,12 +1,14 @@
+interface PageData {
+  access_token: string;
+  category: string;
+  category_list: { id: string; name: string }[];
+  name: string;
+  id: string;
+  tasks: string[];
+}
+
 interface PagesData {
-  data: Array<{
-    access_token: string;
-    category: string;
-    category_list: Array<{ id: string; name: string }>;
-    name: string;
-    id: string;
-    tasks: string[];
-  }>;
+  data: Array<PageData>;
   paging: {
     cursors: {
       before: string;

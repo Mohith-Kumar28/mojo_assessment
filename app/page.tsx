@@ -11,91 +11,43 @@ import {
 } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { exportToExcel } from "@/utils/export-to-xcell";
+import { useEffect, useState } from "react";
 import { PiExportDuotone } from "react-icons/pi";
 
-const dummyData: ApiResponse = {
-  data: [
-    {
-      name: "page_follows",
-      period: "day",
-      values: [
-        {
-          value: 0,
-          end_time: "2024-06-27T07:00:00+0000",
-        },
-        {
-          value: 0,
-          end_time: "2024-06-28T07:00:00+0000",
-        },
-      ],
-      title: "Lifetime Total Follows",
-      description:
-        "Lifetime: The number of followers of your Facebook Page or profile. This is calculated as the number of follows minus the number of unfollows over the lifetime of your Facebook Page or profile. ",
-      id: "298712583335639/insights/page_follows/day",
-    },
-    {
-      name: "page_post_engagements",
-      period: "day",
-      values: [
-        {
-          value: 0,
-          end_time: "2024-06-27T07:00:00+0000",
-        },
-        {
-          value: 0,
-          end_time: "2024-06-28T07:00:00+0000",
-        },
-      ],
-      title: "Daily Post Engagements",
-      description:
-        "Daily: The number of times people have engaged with your posts through like, comments and shares and more.",
-      id: "298712583335639/insights/page_post_engagements/day",
-    },
-    {
-      name: "page_impressions",
-      period: "day",
-      values: [
-        {
-          value: 0,
-          end_time: "2024-06-27T07:00:00+0000",
-        },
-        {
-          value: 0,
-          end_time: "2024-06-28T07:00:00+0000",
-        },
-      ],
-      title: "Daily Total Impressions",
-      description:
-        "Daily: The number of times any content from your Page or about your Page entered a person's screen. This includes posts, stories, ads, as well other content or information on your Page. (Total Count)",
-      id: "298712583335639/insights/page_impressions/day",
-    },
-    {
-      name: "page_actions_post_reactions_total",
-      period: "day",
-      values: [
-        {
-          value: {},
-          end_time: "2024-06-27T07:00:00+0000",
-        },
-        {
-          value: {},
-          end_time: "2024-06-28T07:00:00+0000",
-        },
-      ],
-      title: "Daily: total post reactions of a page.",
-      description: "Daily: total post reactions of a page.",
-      id: "298712583335639/insights/page_actions_post_reactions_total/day",
-    },
-  ],
-  paging: {
-    previous:
-      "https://graph.facebook.com/v20.0/298712583335639/insights?access_token=EABuacXANtYUBOz27BJYmuacZAjViDtOb1iZC1mIplIOjXyUsOb9RJRjfSyek0Yf5Ax66U7HtZATiZBfDMzLBwTk4hmSqttBin91H0RjM663cZBhrrStZBjcwiQOqqncCdmGTJSEcoTHKJoW1OPVvzfueukMEresyM2VHYcOog1SbjYPGNwLKVGitSXbJ6yiG2g8BNiGw6GeZCcr8IsCZA8pa0hrNhnRZAtzCz&pretty=0&metric=page_follows%2Cpage_post_engagements%2Cpage_impressions%2Cpage_actions_post_reactions_total&period=day&since=1719212400&until=1719385200",
-    next: "https://graph.facebook.com/v20.0/298712583335639/insights?access_token=EABuacXANtYUBOz27BJYmuacZAjViDtOb1iZC1mIplIOjXyUsOb9RJRjfSyek0Yf5Ax66U7HtZATiZBfDMzLBwTk4hmSqttBin91H0RjM663cZBhrrStZBjcwiQOqqncCdmGTJSEcoTHKJoW1OPVvzfueukMEresyM2VHYcOog1SbjYPGNwLKVGitSXbJ6yiG2g8BNiGw6GeZCcr8IsCZA8pa0hrNhnRZAtzCz&pretty=0&metric=page_follows%2Cpage_post_engagements%2Cpage_impressions%2Cpage_actions_post_reactions_total&period=day&since=1719558000&until=1719730800",
-  },
-};
 export default function Home() {
+  const [selectedPage, setSelectedPage] = useState<PageData>();
+
+  const [loading, setLoading] = useState(true);
+  const [metricsData, setMetricsData] = useState<ApiResponse>();
+  // const { data: session }: any = useSession();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://graph.facebook.com/v20.0/${selectedPage?.id}/insights?pretty=0&metric=page_follows,page_post_engagements,page_impressions,page_actions_post_reactions_total&period=day&access_token=${selectedPage?.access_token}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const metricsDataRes: ApiResponse = await response.json();
+        console.log("pagesData", metricsDataRes);
+        // const convertedData = convertPagesData(pagesDataRes);
+        setMetricsData(metricsDataRes);
+        // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+
+    if (selectedPage?.access_token) {
+      fetchData();
+    }
+  }, [selectedPage]);
+
   // Calculate totals for each metric
-  const metricsWithTotals = dummyData.data.map((metric) => ({
+  const metricsWithTotals = metricsData?.data.map((metric) => ({
     ...metric,
     totalValue: metric.values.reduce(
       (acc, curr) => acc + (typeof curr.value === "number" ? curr.value : 0),
@@ -105,8 +57,8 @@ export default function Home() {
 
   // Prepare summary data
   // Prepare summary data with each metric's total in its own row
-  const summaryData: SummaryDataRow[] = dummyData.data.reduce(
-    (acc: SummaryDataRow[], metric: MetricData) => {
+  const summaryData: SummaryDataRow[] =
+    metricsData?.data.reduce((acc: SummaryDataRow[], metric: MetricData) => {
       // Calculate the earliest start date and latest end date for the metric
       const startDate = metric.values.reduce(
         (
@@ -162,30 +114,29 @@ export default function Home() {
       }
 
       return acc;
-    },
-    []
-  );
+    }, []) || [];
 
   // Prepare detailed data
-  const detailedData: DetailedDataRow[] = dummyData.data.map((metric) => ({
-    ID: metric.id,
-    Name: metric.name,
-    Period: metric.period,
-    Description: metric.description,
-    Title: metric.title,
-    Values: metric.values
-      .map((value) => {
-        let valueStr = "";
-        if (typeof value.value === "number") {
-          valueStr = `${value.value}`;
-        } else if (typeof value.value === "object" && value.value !== null) {
-          // Attempt to stringify the object value
-          valueStr = JSON.stringify(value.value);
-        }
-        return `${valueStr} at ${value.end_time}`;
-      })
-      .join(", "), // Join all values with a comma
-  }));
+  const detailedData: DetailedDataRow[] =
+    metricsData?.data.map((metric) => ({
+      ID: metric.id,
+      Name: metric.name,
+      Period: metric.period,
+      Description: metric.description,
+      Title: metric.title,
+      Values: metric.values
+        .map((value) => {
+          let valueStr = "";
+          if (typeof value.value === "number") {
+            valueStr = `${value.value}`;
+          } else if (typeof value.value === "object" && value.value !== null) {
+            // Attempt to stringify the object value
+            valueStr = JSON.stringify(value.value);
+          }
+          return `${valueStr} at ${value.end_time}`;
+        })
+        .join(", "), // Join all values with a comma
+    })) || [];
 
   // Function to handle export click
   const handleExportClick = () => {
@@ -222,7 +173,10 @@ export default function Home() {
             />
           </div>
           <div className="sm:col-span-2">
-            <PagesList />
+            <PagesList
+              setSelectedPage={setSelectedPage}
+              selectedPage={selectedPage}
+            />
           </div>
         </div>
         <Card
@@ -245,7 +199,7 @@ export default function Home() {
           </div>
         </Card>
 
-        {metricsWithTotals.map((metric) => {
+        {metricsWithTotals?.map((metric) => {
           const title = metricTitles[metric.name];
           if (!title) return null; // Skip if no matching title found
 
