@@ -60,7 +60,7 @@ export default function Home() {
         const response = await fetch(
           `https://graph.facebook.com/v20.0/${
             selectedPage?.id
-          }/insights?pretty=0&metric=page_daily_follows_unique,page_impressions,page_post_engagements,page_actions_post_reactions_total&period=day&access_token=${
+          }/insights?pretty=0&metric=page_daily_follows_unique,page_impressions,page_post_engagements,page_actions_post_reactions_like_total&period=day&access_token=${
             selectedPage?.access_token
           }&${period && "period=" + period}&${
             selectedRange?.from &&
@@ -196,7 +196,7 @@ export default function Home() {
     page_daily_follows_unique: "Total Followers / Fans",
     page_post_engagements: "Total Engagement",
     page_impressions: "Total Impressions",
-    page_actions_post_reactions_total: "Total Reactions",
+    page_actions_post_reactions_like_total: "Total Like Reactions",
   };
 
   return (
