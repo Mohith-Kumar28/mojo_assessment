@@ -88,6 +88,8 @@ const PagesList: React.FC<{
         console.log("pagesData", pagesDataRes);
         // const convertedData = convertPagesData(pagesDataRes);
         setPagesData(pagesDataRes);
+        setValue(pagesDataRes.data[0].name);
+        setSelectedPage(pagesDataRes.data[0]);
         // localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
         setLoading(false);
       } catch (error) {
