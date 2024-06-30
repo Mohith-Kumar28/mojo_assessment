@@ -71,8 +71,9 @@ export default function PagesList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("session", session, session.accessToken);
         const response = await fetch(
-          `https://graph.facebook.com/v20.0/me/accounts?access_token=${session?.accessToken}`
+          `https://graph.facebook.com/v20.0/me/accounts?access_token=EABuacXANtYUBO4ZA48fonqfTBD8ZBLklNxF2fApbJYZBBeMVviGYhnocTLm38tJHFGUNHVkBWMyiNCw4IJWjqzom6BaL8p76sveTI2FW3NgLm0aQ62Ohp3zLmr9EPRTnAUJHICH1E7TcNX8q0GZCdaaRnTtHnHmYuWLM1A5SZBHr8wzz9IrdsL8a4IomvPcTcPhBRZAkAR4sTs81QwZCO7uxaDTClYBqQoN6oht30K2ceLvodNiEf5DZAuNZBgqfZB`
         );
 
         if (!response.ok) {
