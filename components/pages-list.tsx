@@ -67,7 +67,7 @@ export default function PagesList() {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const session = useSession();
+  const { data: session }: any = useSession();
   const accessToken = session.accessToken;
   useEffect(() => {
     const fetchData = async () => {
