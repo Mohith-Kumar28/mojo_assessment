@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -18,6 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 const pagesData: PagesData = {
   data: [
     {
@@ -62,9 +63,35 @@ const convertPagesData = (pagesData: PagesData): ConvertedPage[] => {
 const formattedPages = convertPagesData(pagesData);
 
 export default function PagesList() {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const session = useSession();
+  const accessToken = session.accessToken;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://graph.facebook.com/v20.0/me/accounts?access_token=${accessToken}`
+        );
 
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const pagesData: PagesData = await response.json();
+        const convertedData = convertPagesData(pagesData);
+        setData(convertedData);
+        localStorage.setItem("pagesData", JSON.stringify(convertedData)); // Save data to local storage
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
