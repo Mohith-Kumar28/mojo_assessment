@@ -20,6 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { exportToExcel } from "@/utils/export-to-xcell";
 import { signIn, useSession } from "next-auth/react";
@@ -202,9 +208,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex  flex-col items-center justify-between p-14">
+    <main className="flex  flex-col items-center justify-between px-14">
       <div className="grid gap-4 lg:grid-cols-2 ">
-        {!session && (
+        {session && (
           <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
@@ -291,19 +297,27 @@ export default function Home() {
             if (!title) return null; // Skip if no matching title found
 
             return (
-              <Card key={metric.id}>
-                <CardHeader className="pb-2">
-                  <CardDescription>{title}</CardDescription>
-                  <CardTitle className="text-4xl">
-                    {metric.totalValue}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    {metric.description}
-                  </div>
-                </CardContent>
-              </Card>
+              <TooltipProvider key={metric.id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="cursor-help">
+                      <CardHeader className="pb-2">
+                        <CardDescription>{title}</CardDescription>
+                        <CardTitle className="text-4xl">
+                          {metric.totalValue}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent></CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {" "}
+                    <div className="text-xs p-3 max-w-lg text-muted-foreground ">
+                      {metric.description}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             );
           })
         ) : (

@@ -97,7 +97,7 @@ export default function MetricGraph({
     },
   };
   {
-    console.log(chartData);
+    // console.log(chartData);
   }
   return (
     <Chart
