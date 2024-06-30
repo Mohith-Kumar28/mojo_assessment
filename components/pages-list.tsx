@@ -68,12 +68,11 @@ export default function PagesList() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const { data: session }: any = useSession();
-  const accessToken = session.accessToken;
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://graph.facebook.com/v20.0/me/accounts?access_token=${accessToken}`
+          `https://graph.facebook.com/v20.0/me/accounts?access_token=${session?.accessToken}`
         );
 
         if (!response.ok) {
