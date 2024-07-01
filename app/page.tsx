@@ -204,7 +204,7 @@ export default function Home() {
   return (
     <main className="flex  flex-col items-center justify-between p-14">
       <div className="grid gap-4 lg:grid-cols-2 ">
-        {session && (
+        {!session && (
           <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
@@ -229,7 +229,7 @@ export default function Home() {
                     <SelectItem value="day">Day</SelectItem>
                     <SelectItem value="week">Week</SelectItem>
                     <SelectItem value="days_28">28 Days</SelectItem>
-                    <SelectItem value="lifetime">Lifetime</SelectItem>
+                    {/* <SelectItem value="lifetime">Lifetime</SelectItem> */}
                   </SelectGroup>
                 </SelectContent>
               </Select>
