@@ -204,7 +204,7 @@ export default function Home() {
   return (
     <main className="flex  flex-col items-center justify-between p-14">
       <div className="grid gap-4 lg:grid-cols-2 ">
-        {!session && (
+        {session && (
           <div className="grid gap-4   sm:grid-cols-8 sm:col-span-2">
             <Button onClick={handleExportClick} className="sm:col-span-1">
               <PiExportDuotone className="text-2xl" />
